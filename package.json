@@ -38,12 +38,15 @@
     "universal-cookie": "^3.0.7"
   },
   "devDependencies": {
+    "acorn": "^6.0.5",
+    "acorn-jsx": "^5.0.1",
     "cross-env": "^5.1.6",
     "eslint": "^5.12.1",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.15.0",
     "eslint-plugin-jsx-a11y": "^6.2.0",
-    "eslint-plugin-react": "^7.12.4"
+    "eslint-plugin-react": "^7.12.4",
+    "espree": "^5.0.0"
   },
   "optionalDependencies": {
     "fsevents": "*"
