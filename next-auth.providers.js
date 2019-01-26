@@ -16,59 +16,63 @@
  * TWITTER_KEY=
  * TWITTER_SECRET=
  *
- * If you wish, you can put these in a `.env` to seperate your environment 
+ * If you wish, you can put these in a `.env` to seperate your environment
  * specific configuration from your code.
- **/
+ */
+
+const { Strategy: FacebookStrategy } = require('passport-facebook');
+const { OAuth2Strategy: GoogleStrategy } = require('passport-google-oauth');
+const { Strategy: TwitterStrategy } = require('passport-twitter');
 
 // Load environment variables from a .env file if one exists
-require('dotenv').load()
+require('dotenv').load();
 
 module.exports = () => {
-  let providers = []
+  const providers = [];
 
   if (process.env.FACEBOOK_ID && process.env.FACEBOOK_SECRET) {
     providers.push({
       providerName: 'Facebook',
       providerOptions: {
-        scope: ['email', 'public_profile']
+        scope: ['email', 'public_profile'],
       },
-      Strategy: require('passport-facebook').Strategy,
+      Strategy: FacebookStrategy,
       strategyOptions: {
         clientID: process.env.FACEBOOK_ID,
         clientSecret: process.env.FACEBOOK_SECRET,
-        profileFields: ['id', 'displayName', 'email', 'link']
+        profileFields: ['id', 'displayName', 'email', 'link'],
       },
       getProfile(profile) {
         // Normalize profile into one with {id, name, email} keys
         return {
           id: profile.id,
           name: profile.displayName,
-          email: profile._json.email
-        }
-      }
-    })
+          email: profile._json.email, // eslint-disable-line no-underscore-dangle
+        };
+      },
+    });
   }
 
   if (process.env.GOOGLE_ID && process.env.GOOGLE_SECRET) {
     providers.push({
       providerName: 'Google',
       providerOptions: {
-        scope: ['profile', 'email']
+        scope: ['profile', 'email'],
       },
-      Strategy: require('passport-google-oauth').OAuth2Strategy,
+      Strategy: GoogleStrategy,
       strategyOptions: {
         clientID: process.env.GOOGLE_ID,
-        clientSecret: process.env.GOOGLE_SECRET
+        clientSecret: process.env.GOOGLE_SECRET,
       },
       getProfile(profile) {
         // Normalize profile into one with {id, name, email} keys
         return {
           id: profile.id,
           name: profile.displayName,
-          email: profile.emails[0].value
-        }
-      }
-    })
+          email: profile.emails[0].value,
+        };
+      },
+    });
   }
 
   /**
@@ -76,33 +80,33 @@ module.exports = () => {
    * If we don't get one NextAuth will create a placeholder in the form
    * `{provider}-{account-id}@localhost.localdomain`
    *
-   * To have your Twitter oAuth return emails go to apps.twitter.com and add 
-   * links to your Terms and Conditions and Privacy Policy under the "Settings" 
-   * tab, then check the "Request email addresses" from users box under the 
-   * "Permissions" tab. 
-   **/
+   * To have your Twitter oAuth return emails go to apps.twitter.com and add
+   * links to your Terms and Conditions and Privacy Policy under the "Settings"
+   * tab, then check the "Request email addresses" from users box under the
+   * "Permissions" tab.
+   */
   if (process.env.TWITTER_KEY && process.env.TWITTER_SECRET) {
     providers.push({
       providerName: 'Twitter',
       providerOptions: {
-        scope: []
+        scope: [],
       },
-      Strategy: require('passport-twitter').Strategy,
+      Strategy: TwitterStrategy,
       strategyOptions: {
         consumerKey: process.env.TWITTER_KEY,
         consumerSecret: process.env.TWITTER_SECRET,
-        userProfileURL: 'https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true'
+        userProfileURL: 'https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true',
       },
       getProfile(profile) {
         // Normalize profile into one with {id, name, email} keys
         return {
           id: profile.id,
           name: profile.displayName,
-          email: (profile.emails && profile.emails[0].value) ? profile.emails[0].value : ''
-        }
-      }
-    })
+          email: (profile.emails && profile.emails[0].value) ? profile.emails[0].value : '',
+        };
+      },
+    });
   }
-  
-  return providers
-}
+
+  return providers;
+};
