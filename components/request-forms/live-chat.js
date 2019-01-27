@@ -5,7 +5,7 @@ import { Button } from 'reactstrap';
 function onClick(onSuccess) {
   return async () => {
     // eslint-disable-next-line no-undef
-    const res = await fetch('/requests', {
+    const res = await fetch('/request', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

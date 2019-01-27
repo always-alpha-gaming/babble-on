@@ -1,7 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import {
   Form,
   FormGroup,
@@ -22,21 +20,23 @@ export default class Schedule extends React.Component {
     this.state = {
       start: null,
       end: null,
+      date: null,
     };
 
     this.onSubmit = this.onSubmit.bind(this);
-    this.onStartDateChange = this.onStartDateChange.bind(this);
-    this.onEndDateChange = this.onEndDateChange.bind(this);
+    this.onStartChange = this.onStartChange.bind(this);
+    this.onEndChange = this.onEndChange.bind(this);
+    this.onDateChange = this.onDateChange.bind(this);
   }
 
   async onSubmit(e) {
     e.preventDefault();
 
-    const { start, end } = this.state;
+    const { start, end, date } = this.state;
     const { onSuccess } = this.props;
 
     // eslint-disable-next-line no-undef
-    const res = await fetch('/requests', {
+    const res = await fetch('/request', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -44,6 +44,7 @@ export default class Schedule extends React.Component {
       body: JSON.stringify({
         type: 'schedule',
         data: {
+          date: new Date(date),
           start,
           end,
         },
@@ -57,43 +58,64 @@ export default class Schedule extends React.Component {
     onSuccess('Successfully requested scheduled translation');
   }
 
-  onStartDateChange(e) {
+  onDateChange(e) {
     this.setState({
-      start: e.getMilliseconds(),
+      date: e.target.value,
     });
   }
 
-  onEndDateChange(e) {
+  onStartChange(e) {
     this.setState({
-      end: e.getMilliseconds(),
+      start: e.target.value,
+    });
+  }
+
+  onEndChange(e) {
+    this.setState({
+      end: e.target.value,
     });
   }
 
   render() {
-    const { start, end } = this.state;
+    const { start, end, date } = this.state;
     return (
       <>
         <h2>Schedule a Babbler</h2>
         <Form onSubmit={this.onSubmit}>
           <FormGroup>
+            <Label htmlFor="date">
+              Date:
+              <Input
+                required
+                type="date"
+                id="date"
+                value={date}
+                onChange={this.onDateChange}
+              />
+            </Label>
+          </FormGroup>
+          <FormGroup>
             <Label htmlFor="start">
               Start time:
-              <DatePicker
+              <Input
+                required
+                type="time"
                 id="start"
-                selected={start}
-                onChange={this.onStartDateChange}
-                showTimeSelect
+                value={start}
+                onChange={this.onStartChange}
               />
             </Label>
           </FormGroup>
           <FormGroup>
             <Label htmlFor="end">
               End time:
-              <DatePicker
+              <Input
+                required
+                type="time"
                 id="end"
-                selected={end}
+                min={start}
+                value={end}
                 onChange={this.onEndDateChange}
-                showTimeSelect
               />
             </Label>
           </FormGroup>
