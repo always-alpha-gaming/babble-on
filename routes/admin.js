@@ -21,6 +21,8 @@ if (process.env.MONGO_URI) {
     const db = mongoClient.db(dbName);
     usersCollection = db.collection('users');
   });
+} else {
+  throw new Error('Please define the MONGO_URI in the process.env');
 }
 
 module.exports = (expressApp) => {

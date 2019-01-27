@@ -62,6 +62,7 @@ module.exports = (expressApp) => {
 
     const babblerId = req.query.babbler_id ? req.query.babbler_id : false;
     const userId = req.query.user_id ? req.query.user_id : false;
+    const claimed = req.query.claimed ? req.query.claimed : null;
 
     const query = {};
 
@@ -72,6 +73,14 @@ module.exports = (expressApp) => {
     if (userId) {
       query.user_id = ObjectID(userId);
     }
+
+    console.log(claimed);
+
+    if (claimed === 'true' || claimed === 'false') {
+      query.babbler_id = { $exists: claimed === 'true' };
+    }
+
+    console.log(query);
 
     const response = {
       requests: [],
@@ -91,16 +100,16 @@ module.exports = (expressApp) => {
         .sort(sort)
         .limit(size);
 
-      result.toArray((err, results) => {
+      result.toArray((err, requests) => {
         if (err) {
           reject(err);
         } else {
-          resolve(results);
+          resolve(requests);
         }
       });
     })
-      .then((results) => {
-        response.results = results;
+      .then((requests) => {
+        response.requests = requests;
         return result.count();
       })
       .then((count) => {
