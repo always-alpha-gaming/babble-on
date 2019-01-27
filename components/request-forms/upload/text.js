@@ -27,6 +27,7 @@ export default class Upload extends React.Component {
     e.preventDefault();
 
     const { name, text } = this.state;
+    const { onSuccess } = this.props;
 
     // eslint-disable-next-line no-undef
     fetch('/request', {
@@ -45,7 +46,8 @@ export default class Upload extends React.Component {
       if (!res.ok) {
         throw new Error('Failed to create new request');
       }
-    }).then(this.resetFields);
+    }).then(this.resetFields)
+      .then(() => onSuccess('Successfully requested text translation'));
   }
 
   onTextChange(e) {

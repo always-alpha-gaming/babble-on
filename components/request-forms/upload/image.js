@@ -36,6 +36,7 @@ export default class Upload extends React.Component {
       imageNames,
       name,
     } = this.state;
+    const { onSuccess } = this.props;
 
     const images = imageUrls.map((url, i) => ({
       name: imageNames[i],
@@ -59,7 +60,8 @@ export default class Upload extends React.Component {
       if (!res.ok) {
         throw new Error('Failed to create new request');
       }
-    }).then(this.resetFields);
+    }).then(this.resetFields)
+      .then(() => onSuccess('Successfully requested upload translation'));
   }
 
   async onImageChange(e) {

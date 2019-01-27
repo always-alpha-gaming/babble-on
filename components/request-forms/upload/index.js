@@ -28,6 +28,7 @@ export default class Upload extends React.Component {
 
   render() {
     const { index } = this.state;
+    const { onSuccess } = this.props;
     return (
       <>
         <Nav tabs>
@@ -51,10 +52,10 @@ export default class Upload extends React.Component {
         <br />
         <TabContent activeTab={index}>
           <TabPane tabId={0}>
-            <Image />
+            <Image onSuccess={onSuccess} />
           </TabPane>
           <TabPane tabId={1}>
-            <Text />
+            <Text onSuccess={onSuccess} />
           </TabPane>
         </TabContent>
       </>
