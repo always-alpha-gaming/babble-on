@@ -43,9 +43,6 @@ export default class extends React.Component {
   static get defaultProps() {
     return {
       title: 'Babble-On',
-      fluid: false,
-      navmenu: true,
-      signinBtn: true,
     };
   }
 

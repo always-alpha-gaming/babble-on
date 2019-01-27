@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Button,
   Col,
@@ -13,6 +14,12 @@ import {
 } from 'reactstrap';
 
 export default class Upload extends React.Component {
+  static get propTypes() {
+    return {
+      onSuccess: PropTypes.func.isRequired,
+    };
+  }
+
   constructor(props) {
     super(props);
 

@@ -1,5 +1,5 @@
-// wrap image and text in some tabs
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Nav,
   NavItem,
@@ -12,6 +12,12 @@ import Image from './image';
 import Text from './text';
 
 export default class Upload extends React.Component {
+  static get propTypes() {
+    return {
+      onSuccess: PropTypes.func.isRequired,
+    };
+  }
+
   constructor(props) {
     super(props);
 
