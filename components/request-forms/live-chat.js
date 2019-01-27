@@ -26,7 +26,7 @@ function onClick(onSuccess) {
 const LiveChat = ({ onSuccess }) => (
   <>
     <h2>Live Chat</h2>
-    <Button onClick={onClick(onSuccess)} color="primary" block>
+    <Button size="lg" onClick={onClick(onSuccess)} color="primary" block>
       Join live chat
     </Button>
   </>
