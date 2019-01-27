@@ -38,10 +38,12 @@ const forms = [
   {
     name: 'Live Chat',
     component: LiveChat,
+    props: {},
   },
   {
     name: 'Schedule',
     component: Schedule,
+    props: {},
   },
 ];
 const names = forms.map(({ name }) => name);
