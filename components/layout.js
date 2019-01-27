@@ -269,8 +269,8 @@ export class UserMenu extends React.Component {
   static get propTypes() {
     return {
       session: PropTypes.object.isRequired,
-      signinBtn: PropTypes.boolean,
-      toggleModal: PropTypes.boolean,
+      // signinBtn: PropTypes.boolean,
+      // toggleModal: PropTypes.boolean,
     };
   }
 
