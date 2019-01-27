@@ -8,7 +8,6 @@ import Layout from '../components/layout'
 import Cookies from 'universal-cookie'
 
 export default class extends Page {
-
   static async getInitialProps({req}) {
     let props = await super.getInitialProps({req});
     props.linkedAccounts = await NextAuth.linked({req});
@@ -31,6 +30,7 @@ export default class extends Page {
       this.state.email = props.session.user.email
     }
     this.handleChange = this.handleChange.bind(this);
+    this.photoUpload = this.photoUpload.bind(this);
     this.onSubmit = this.onSubmit.bind(this)
   }
 
@@ -49,6 +49,7 @@ export default class extends Page {
     this.getProfile()
   }
 
+
   getProfile() {
     fetch('/account/user', {
       credentials: 'include'
@@ -59,14 +60,52 @@ export default class extends Page {
       this.setState({
         name: user.name,
         email: user.email,
-        emailVerified: user.emailVerified
+        emailVerified: user.emailVerified,
+        avatar: user.avatar,
+        skills: user.skills,
+        type: user.type,
+        bio: user.bio,
+        rating: "2.3",
       })
     })
+  }
+
+  round(value, step) {
+    step || (step = 1.0);
+    const inv = 1.0 / step;
+    return Math.round(value * inv) / inv;
+  }
+
+  generateStars() {
+    if (this.state.rating){
+      const stars = this.round(parseFloat(this.state.rating), 0.5);
+    const starArray = [];
+    for (let i = 1; i < stars; i++) {
+      starArray.push(<i className="icon ion-md-star" style={{ fontSize: "50px" }}/>);
+    }
+    if (stars % 1 != 0) {
+      starArray.push(<i className="icon ion-md-star-half" style={{ fontSize: "50px" }}/>);
+    }
+    const arrayln = starArray.length;
+    for (let i = arrayln; i < 5; i++) {
+      starArray.push(<i className="icon ion-md-star-outline" style={{ fontSize: "50px" }}/>);
+    }
+    return starArray
+  }
+
   }
 
   handleChange(event) {
     this.setState({
       [event.target.name]: event.target.value
+    })
+  }
+
+  photoUpload(event, data) {
+    const file = this.fileUpload.files[0];
+    const url = window.URL.createObjectURL(file);
+    this.setState({
+      avatar: url
     })
   }
 
@@ -82,7 +121,12 @@ export default class extends Page {
     const formData = {
       _csrf: await NextAuth.csrfToken(),
       name: this.state.name || '',
-      email: this.state.email || ''
+      email: this.state.email || '',
+      avatar: this.state.avatar,
+      skills: this.state.skills,
+      type: this.state.type,
+      bio: this.state.bio,
+      rating: "2.3",
     };
 
     // URL encode form
@@ -137,27 +181,28 @@ export default class extends Page {
             </Col>
           </Row>
           {alert}
-          <span className="icon ion-md-star "/>
-          <span className="icon ion-md-star-outline"/>
-          <span className="icon ion-md-star-half"/>
+          {this.generateStars()}
           <Row className="mt-4">
             <Col xs="12" md="8" lg="9">
               <Form method="post" action="/account/user" onSubmit={this.onSubmit}>
                 <Input name="_csrf" type="hidden" value={this.state.session.csrfToken} onChange={()=>{}}/>
                 <FormGroup row>
                   <Col>
-                      <img className={"img img-fluid"} src="/static/img/avatar.svg" alt="didnt work" />
+                      <img className={"img img-fluid"} src={this.state.avatar?this.state.avatar : "/static/img/avatar.svg"  } alt="didnt work" />
                   </Col>
                   <Col>
-                        <Label sm={2}>Name:</Label>
-
-                          <Input name="name" value={this.state.name} onChange={this.handleChange}/>
-                          <Input type="textarea" name="bio" placeholder="bio..." value="" onChange={this.handleChange}/>
-
+                    <Label sm={2}>Name:</Label>
+                    <Input name="name" value={this.state.name} onChange={this.handleChange}/>
+                    <Label sm={2}>Bio:</Label>
+                    <Input type="textarea" name="bio" placeholder="Tell us about yourself..." value={this.state.bio} onChange={this.handleChange}/>
                   </Col>
                 </FormGroup>
                 <FormGroup row>
-                <Input colour="primary" type="file"/>
+                  <Col>
+                    <label className="btn btn-primary">
+                      Upload Photo <input name="avatar" type="file" hidden onChange={this.photoUpload} ref={(ref) => this.fileUpload = ref}/>
+                    </label>
+                  </Col>
                 </FormGroup>
                 <FormGroup row>
                   <Label sm={2}>Email:</Label>
@@ -168,7 +213,7 @@ export default class extends Page {
                 <FormGroup row>
                   <Label sm={2}>Skills:</Label>
                   <Col sm={10} md={8}>
-                    <Input type="textarea" name="skills" value="" block onChange={this.handleChange}/>
+                    <Input type="textarea" name="skills" value="" block={"true"} onChange={this.handleChange}/>
                   </Col>
                 </FormGroup>
                 <FormGroup row>
