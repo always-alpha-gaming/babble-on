@@ -119,11 +119,13 @@ export default class extends React.Component {
           </label>
           <div className="nojs-navbar">
             <Nav navbar>
-              <NavItem>
-                <NavLink href="/request">
-                  Request a Translation
-                </NavLink>
-              </NavItem>
+              {session.user && (
+                <NavItem>
+                  <NavLink href="/request">
+                    Request a Translation
+                  </NavLink>
+                </NavItem>
+              )}
               {session.user && session.user.babbler && (
                 <NavItem>
                   <NavLink href="/queue">
@@ -132,7 +134,7 @@ export default class extends React.Component {
                 </NavItem>
               )}
             </Nav>
-            <UserMenu session={session} toggleModal={this.toggleModal} signinBtn={signinBtn}/>
+            <UserMenu session={session} toggleModal={this.toggleModal} signinBtn={signinBtn} />
           </div>
         </Navbar>
         <MainBody navmenu={navmenu} fluid={fluid} container={container}>
