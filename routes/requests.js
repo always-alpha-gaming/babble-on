@@ -41,7 +41,7 @@ module.exports = (expressApp) => {
   // Expose a route to return user profile if logged in with a session
   expressApp.get('/requests/', (req, res) => {
     // Check user is logged in and has admin access
-    if (!req.user || !req.user.admin || req.user.admin !== true) {
+    if (!req.user) {
       return res.status('403')
         .end();
     }

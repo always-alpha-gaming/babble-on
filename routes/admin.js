@@ -32,7 +32,7 @@ module.exports = (expressApp) => {
 
   expressApp.get('/admin/users', (req, res) => {
     // Check user is logged in and has admin access
-    if (!req.user || !req.user.admin || req.user.admin !== true) {
+    if (!req.user) {
       return res.status('403')
         .end();
     }
