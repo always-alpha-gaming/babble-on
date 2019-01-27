@@ -53,13 +53,32 @@ export default class extends React.Component {
       navOpen: false,
       modal: false,
       providers: null,
+      collapsed: true,
     };
 
     this.toggleModal = this.toggleModal.bind(this);
+    this.toggleNavbar = this.toggleNavbar.bind(this);
+  }
+
+  toggleNavbar() {
+    this.setState({
+      collapsed: !this.state.collapsed
+    });
   }
 
   async toggleModal(e) {
     if (e) {
+    this.toggleNavbar = this.toggleNavbar.bind(this);
+    this.state = {
+      collapsed: true
+    };
+  }
+
+  toggleNavbar() {
+    this.setState({
+      collapsed: !this.state.collapsed
+    });
+  }
       e.preventDefault();
     }
 
@@ -102,6 +121,7 @@ export default class extends React.Component {
           <script src="https://cdn.polyfill.io/v2/polyfill.min.js" />
         </Head>
         <Navbar light className="navbar navbar-expand-md pt-3 pb-3">
+          <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
           <Link prefetch href="/">
             <NavbarBrand href="/">
               <span className="icon ion-md-home mr-1" />
