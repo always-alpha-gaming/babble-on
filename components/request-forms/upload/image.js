@@ -1,11 +1,14 @@
 import React from 'react';
 import {
+  Button,
   Col,
   Form,
   FormGroup,
   FormText,
   Input,
   Label,
+  ListGroup,
+  ListGroupItem,
   Row,
 } from 'reactstrap';
 
@@ -16,18 +19,98 @@ export default class Upload extends React.Component {
     this.state = {
       name: '',
       imageUrls: [],
+      imageNames: [],
     };
 
     this.onSubmit = this.onSubmit.bind(this);
+    this.onImageChange = this.onImageChange.bind(this);
+    this.resetFields = this.resetFields.bind(this);
+    this.removeImage = this.removeImage.bind(this);
   }
 
   onSubmit(e) {
     e.preventDefault();
-    this.onSubmit();
+
+    const {
+      imageUrls,
+      imageNames,
+      name,
+    } = this.state;
+
+    const images = imageUrls.map((url, i) => ({
+      name: imageNames[i],
+      url,
+    }));
+
+    fetch('/request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        type: 'image',
+        name,
+        data: {
+          images,
+        },
+      }),
+    }).then((res) => {
+      if (!res.ok) {
+        throw new Error('Failed to create new request');
+      }
+    }).then(this.resetFields);
+  }
+
+  async onImageChange(e) {
+    const images = e.target.files;
+    const urlPromises = [];
+    const imageNames = [];
+
+    for (let i = 0; i < images.length; i += 1) {
+      const formData = new FormData(); // eslint-disable-line no-undef
+      formData.append('sharex', images[i]);
+      formData.append('secret', 'VAKEY');
+
+      // eslint-disable-next-line no-undef
+      const reqPromise = fetch('https://pvpcraft.ca/upload/upload_babble_to.php', {
+        method: 'POST',
+        mode: 'cors',
+        body: formData,
+      }).then((res) => {
+        if (res.ok) {
+          return res.text();
+        }
+        throw new Error(`Failed to get url: ${res.statusText}`);
+      });
+      urlPromises.push(reqPromise);
+      imageNames.push(images[i].name);
+    }
+
+    const imageUrls = await Promise.all(urlPromises);
+    e.target.value = '';
+
+    this.setState({ imageUrls, imageNames });
+  }
+
+  resetFields() {
+    this.setState({
+      name: '',
+      imageUrls: [],
+      imageNames: [],
+    });
+  }
+
+  removeImage(index) {
+    return () => {
+      this.setState(({ imageNames, imageUrls }) => ({
+        imageNames: imageNames.filter((_, i) => i !== index),
+        imageUrls: imageUrls.filter((_, i) => i !== index),
+      }));
+    };
   }
 
   render() {
-    const { name } = this.state;
+    const { name, imageNames } = this.state;
     return (
       <>
         <Row>
@@ -36,39 +119,54 @@ export default class Upload extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Form onSubmit={this.onSubmit}>
-            <FormGroup>
-              <Label htmlFor="name">
-                Name:
-                <Input
-                  onInput={({ target: { value } }) => this.setState({ name: value })}
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={name}
-                  required
-                />
-                <FormText color="muted">
-                  A friendly name for the document
-                </FormText>
-              </Label>
-            </FormGroup>
-            <FormGroup>
-              <Label htmlFor="image">
-                Image
-                <Input
-                  type="file"
-                  id="image"
-                  accept="image/*"
-                  name="image"
-                  required
-                />
-                <FormText color="muted">
-                  Add the images that make up the document
-                </FormText>
-              </Label>
-            </FormGroup>
-          </Form>
+          <Col xs={12} lg={8}>
+            <Form onSubmit={this.onSubmit}>
+              <FormGroup>
+                <Label htmlFor="name">
+                  Name:
+                  <Input
+                    onChange={({ target: { value } }) => this.setState({ name: value })}
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={name}
+                    required
+                  />
+                  <FormText color="muted">
+                    A friendly name for the document
+                  </FormText>
+                </Label>
+              </FormGroup>
+              <FormGroup>
+                <Label htmlFor="image">
+                  Image
+                  <Input
+                    type="file"
+                    id="image"
+                    accept="image/*"
+                    name="image"
+                    onChange={this.onImageChange}
+                    multiple
+                    required
+                  />
+                  <FormText color="muted">
+                    Add the images that make up the document
+                  </FormText>
+                </Label>
+              </FormGroup>
+            </Form>
+          </Col>
+          <Col xs={12} lg={4}>
+            <h3>Images</h3>
+            <ListGroup flush>
+              {imageNames.map((url, i) => (
+                <ListGroupItem>
+                  {url}
+                  <Button onClick={this.removeImage(i)} close />
+                </ListGroupItem>
+              ))}
+            </ListGroup>
+          </Col>
         </Row>
       </>
     );

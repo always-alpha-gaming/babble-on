@@ -52,7 +52,7 @@ export default class Request extends Page {
     const CurrentForm = forms[currentForm];
 
     return (
-      <Layout>
+      <Layout session={this.props.session}>
         <h1>Request a Babbler</h1>
         <Row>
           <Col xs={12} md={4} lg={3}>
