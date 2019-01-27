@@ -4,6 +4,7 @@ import {
   ButtonGroup,
   Row,
   Col,
+  Container,
 } from 'reactstrap';
 import Page from '../components/page';
 import Layout from '../components/layout';
@@ -11,6 +12,14 @@ import Layout from '../components/layout';
 import Upload from '../components/request-forms/upload/image';
 
 const forms = [
+  {
+    name: 'Upload',
+    component: Upload,
+  },
+  {
+    name: 'Upload',
+    component: Upload,
+  },
   {
     name: 'Upload',
     component: Upload,
@@ -47,7 +56,7 @@ export default class Request extends Page {
         <h1>Request a Babbler</h1>
         <Row>
           <Col xs={12} md={4} lg={3}>
-            <ButtonGroup vertical>
+            <ButtonGroup block vertical style={{ width: '100%' }}>
               {names.map((name, i) => (
                 <Button size="lg" block onClick={this.changeForm(i)} active={i === currentForm}>
                   {name}
@@ -56,7 +65,9 @@ export default class Request extends Page {
             </ButtonGroup>
           </Col>
           <Col xs={12} md={8} lg={9}>
-            <CurrentForm.component />
+            <Container>
+              <CurrentForm.component />
+            </Container>
           </Col>
         </Row>
       </Layout>
