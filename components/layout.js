@@ -112,7 +112,12 @@ export default class extends React.Component {
             </NavbarBrand>
           </Link>
           <label tabIndex="-1" htmlFor="nojs-navbar-check" className="nojs-navbar-label mt-2">
-            <input className="nojs-navbar-check" id="nojs-navbar-check" type="checkbox" aria-label="Menu" />
+            <input
+              className="nojs-navbar-check"
+              id="nojs-navbar-check"
+              type="checkbox"
+              aria-label="Menu"
+            />
           </label>
           <div className="nojs-navbar">
             <Nav navbar>
@@ -139,7 +144,7 @@ export default class extends React.Component {
                 </div>
               </div>
             </Nav>
-            <UserMenu session={session} toggleModal={this.toggleModal} signinBtn={signinBtn} />
+            <UserMenu session={session} toggleModal={this.toggleModal} signinBtn={signinBtn}/>
           </div>
         </Navbar>
         <MainBody navmenu={navmenu} fluid={fluid} container={container}>
@@ -149,7 +154,10 @@ export default class extends React.Component {
           <hr className="mt-3" />
           <p className="text-muted small">
             <Link href="https://github.com/iaincollins/nextjs-starter">
-              <a href="https://github.com/iaincollins/nextjs-starter" className="text-muted font-weight-bold">
+              <a
+                href="https://github.com/iaincollins/nextjs-starter"
+                className="text-muted font-weight-bold"
+              >
                 <span className="icon ion-logo-github" />
                 {' '}
                 {Package.name}
@@ -194,12 +202,13 @@ export default class extends React.Component {
 }
 
 /* eslint-disable react/no-multi-comp */
-export const MainBody = ({
-  children,
-  container,
-  fluid,
-  navmenu,
-}) => {
+export const MainBody = (
+  {
+    children,
+    container,
+    fluid,
+    navmenu,
+  }) => {
   if (container === false) {
     return (
       <React.Fragment>
@@ -326,9 +335,14 @@ export class UserMenu extends React.Component {
                 </a>
               </Link>
               <AdminMenuItem {...this.props} />
-              <div className="dropdown-divider d-none d-md-block" />
+              <div className="dropdown-divider d-none d-md-block"/>
               <div className="dropdown-item p-0">
-                <Form id="signout" method="post" action="/auth/signout" onSubmit={UserMenu.handleSignoutSubmit}>
+                <Form
+                  id="signout"
+                  method="post"
+                  action="/auth/signout"
+                  onSubmit={UserMenu.handleSignoutSubmit}
+                >
                   <input name="_csrf" type="hidden" value={session.csrfToken} />
                   <Button type="submit" block className="pl-4 rounded-0 text-left dropdown-item">
                     <span className="icon ion-md-log-out mr-1" />
@@ -351,10 +365,10 @@ export class UserMenu extends React.Component {
       <Nav className="ml-auto" navbar>
         <NavItem>
           {/**
-            * @TODO Add support for passing current URL path as redirect URL
-            * so that users without JavaScript are also redirected to the page
-            * they were on before they signed in.
-            */}
+           * @TODO Add support for passing current URL path as redirect URL
+           * so that users without JavaScript are also redirected to the page
+           * they were on before they signed in.
+           */}
           <a
             href="/auth?redirect=/"
             className="btn btn-outline-primary"
