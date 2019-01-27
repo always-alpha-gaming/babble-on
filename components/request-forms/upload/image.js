@@ -49,7 +49,7 @@ export default class Upload extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        type: 'image',
+        type: 'upload',
         name,
         data: {
           images,
@@ -63,9 +63,10 @@ export default class Upload extends React.Component {
   }
 
   async onImageChange(e) {
+    e.persist();
     const images = e.target.files;
     const urlPromises = [];
-    const imageNames = [];
+    const newImageNames = [];
 
     for (let i = 0; i < images.length; i += 1) {
       const formData = new FormData(); // eslint-disable-line no-undef
@@ -84,13 +85,16 @@ export default class Upload extends React.Component {
         throw new Error(`Failed to get url: ${res.statusText}`);
       });
       urlPromises.push(reqPromise);
-      imageNames.push(images[i].name);
+      newImageNames.push(images[i].name);
     }
 
-    const imageUrls = await Promise.all(urlPromises);
-    e.target.value = '';
+    const newImageUrls = await Promise.all(urlPromises);
+    e.target.value = null;
 
-    this.setState({ imageUrls, imageNames });
+    this.setState(({ imageUrls, imageNames }) => ({
+      imageUrls: imageUrls.concat(newImageUrls),
+      imageNames: imageNames.concat(newImageNames),
+    }));
   }
 
   resetFields() {
@@ -148,13 +152,13 @@ export default class Upload extends React.Component {
                     name="image"
                     onChange={this.onImageChange}
                     multiple
-                    required
                   />
                   <FormText color="muted">
                     Add the images that make up the document
                   </FormText>
                 </Label>
               </FormGroup>
+              <Input type="submit" value="Upload" />
             </Form>
           </Col>
           <Col xs={12} lg={4}>
