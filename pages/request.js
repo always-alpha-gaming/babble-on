@@ -12,6 +12,7 @@ import Layout from '../components/layout';
 
 import Upload from '../components/request-forms/upload';
 import LiveChat from '../components/request-forms/live-chat';
+import Schedule from '../components/request-forms/schedule';
 
 const forms = [
   {
@@ -21,6 +22,10 @@ const forms = [
   {
     name: 'Live Chat',
     component: LiveChat,
+  },
+  {
+    name: 'Schedule',
+    component: Schedule,
   },
 ];
 const names = forms.map(({ name }) => name);
