@@ -8,6 +8,7 @@ import {
   Col,
   Nav,
   NavItem,
+  NavLink,
   Button,
   Form,
   Navbar,
@@ -118,28 +119,18 @@ export default class extends React.Component {
           </label>
           <div className="nojs-navbar">
             <Nav navbar>
-              <div tabIndex="-1" className="dropdown nojs-dropdown">
-                <div className="nav-item">
-                  <span className="dropdown-toggle nav-link">Examples</span>
-                </div>
-                <div className="dropdown-menu">
-                  <Link prefetch href="/examples/authentication">
-                    <a href="/examples/authentication" className="dropdown-item">Auth</a>
-                  </Link>
-                  <Link prefetch href="/examples/async">
-                    <a href="/examples/async" className="dropdown-item">Async Data</a>
-                  </Link>
-                  <Link prefetch href="/examples/layout">
-                    <a href="/examples/layout" className="dropdown-item">Layout</a>
-                  </Link>
-                  <Link prefetch href="/examples/routing">
-                    <a href="/examples/routing" className="dropdown-item">Routing</a>
-                  </Link>
-                  <Link prefetch href="/examples/styling">
-                    <a href="/examples/styling" className="dropdown-item">Styling</a>
-                  </Link>
-                </div>
-              </div>
+              <NavItem>
+                <NavLink href="/request">
+                  Request a Translation
+                </NavLink>
+              </NavItem>
+              {session.user && session.user.babbler && (
+                <NavItem>
+                  <NavLink href="/queue">
+                    Do Translate
+                  </NavLink>
+                </NavItem>
+              )}
             </Nav>
             <UserMenu session={session} toggleModal={this.toggleModal} signinBtn={signinBtn}/>
           </div>
