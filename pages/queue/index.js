@@ -18,19 +18,47 @@ const forms = [
   {
     name: 'Queue Livechat',
     component: RequestList,
+    props: {
+      babblerId: '',
+      claimed: false,
+      complete: false,
+    },
   },
   {
     name: 'Schedule',
     component: RequestList,
+    props: {
+      babblerId: '',
+      claimed: false,
+      complete: false,
+    },
   },
   {
     name: 'Queue upload',
     component: RequestList,
+    props: {
+      babblerId: '',
+      claimed: false,
+      complete: false,
+    },
   },
   {
     name: 'Started',
     component: RequestList,
-    props: {},
+    props: {
+      babblerId: '@me',
+      claimed: true,
+      complete: false,
+    },
+  },
+  {
+    name: 'Completed',
+    component: RequestList,
+    props: {
+      babblerId: '@me',
+      claimed: true,
+      complete: true,
+    },
   },
 ];
 const names = forms.map(({ name }) => name);
@@ -59,6 +87,8 @@ export default class Request extends Page {
 
     const CurrentForm = forms[currentForm];
 
+    console.log(CurrentForm);
+
     return (
       <Layout navmenu={false} session={this.props.session}>
         <h1>Work on Request</h1>
@@ -82,7 +112,11 @@ export default class Request extends Page {
           </Col>
           <Col xs={12} md={8} lg={9}>
             <Container>
-              <CurrentForm.component {...currentForm.props} />
+              <CurrentForm.component
+                babbblerId={CurrentForm.props.babblerId}
+                complete={CurrentForm.props.complete}
+                claimed={CurrentForm.props.claimed}
+              />
             </Container>
           </Col>
         </Row>

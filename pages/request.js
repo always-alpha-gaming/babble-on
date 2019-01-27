@@ -7,6 +7,7 @@ import {
   Container,
   UncontrolledAlert,
 } from 'reactstrap';
+import RequestList from '../components/requestList';
 import Page from '../components/page';
 import Layout from '../components/layout';
 
@@ -18,6 +19,21 @@ const forms = [
   {
     name: 'Upload',
     component: Upload,
+    props: {
+      userId: '@me',
+      claimed: true,
+      complete: true,
+    },
+  },
+  {
+    name: 'Completed',
+    component: RequestList,
+    props: {
+      userId: '@me',
+      claimed: true,
+      complete: true,
+      renderContent: true,
+    },
   },
   {
     name: 'Live Chat',
@@ -76,7 +92,13 @@ export default class Request extends Page {
           <Col xs={12} md={4} lg={3}>
             <ButtonGroup vertical style={{ width: '100%' }}>
               {names.map((name, i) => (
-                <Button key={name} size="lg" block onClick={this.changeForm(i)} active={i === currentForm}>
+                <Button
+                  key={name}
+                  size="lg"
+                  block
+                  onClick={this.changeForm(i)}
+                  active={i === currentForm}
+                >
                   {name}
                 </Button>
               ))}
@@ -84,7 +106,13 @@ export default class Request extends Page {
           </Col>
           <Col xs={12} md={8} lg={9}>
             <Container>
-              <CurrentForm.component onSuccess={this.onSuccess} />
+              <CurrentForm.component
+                onSuccess={this.onSuccess}
+                userId={CurrentForm.props.userId}
+                claimed={CurrentForm.props.claimed}
+                complete={CurrentForm.props.complete}
+                renderContent={CurrentForm.props.renderContent}
+              />
             </Container>
           </Col>
         </Row>

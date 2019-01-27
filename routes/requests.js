@@ -60,9 +60,15 @@ module.exports = (expressApp) => {
 
     const skip = (size * (page - 1) > 0) ? size * (page - 1) : 0;
 
-    const babblerId = req.query.babbler_id ? req.query.babbler_id : false;
-    const userId = req.query.user_id ? req.query.user_id : false;
+    const babblerId = req.query.babbler_id
+      ? (req.query.babbler_id === '@me' ? req.user.id : req.query.babbler_id)
+      : false;
+    const userId = req.query.user_id
+      ? (req.query.user_id === '@me' ? req.user.id : req.query.user_id)
+      : false;
     const claimed = req.query.claimed ? req.query.claimed : null;
+    const complete = req.query.complete ? req.query.complete : null;
+
 
     const query = {};
 
@@ -78,6 +84,10 @@ module.exports = (expressApp) => {
 
     if (claimed === 'true' || claimed === 'false') {
       query.babbler_id = { $exists: claimed === 'true' };
+    }
+
+    if (complete === 'true' || complete === 'false') {
+      query.response = { $exists: complete === 'true' };
     }
 
     console.log(query);
