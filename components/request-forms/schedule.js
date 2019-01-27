@@ -29,8 +29,32 @@ export default class Schedule extends React.Component {
     this.onEndDateChange = this.onEndDateChange.bind(this);
   }
 
-  onSubmit(e) {
+  async onSubmit(e) {
     e.preventDefault();
+
+    const { start, end } = this.state;
+    const { onSuccess } = this.props;
+
+    // eslint-disable-next-line no-undef
+    const res = await fetch('/requests', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        type: 'schedule',
+        data: {
+          start,
+          end,
+        },
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to make scheduled request: ${res.statusText}`);
+    }
+
+    onSuccess('Successfully requested scheduled translation');
   }
 
   onStartDateChange(e) {
