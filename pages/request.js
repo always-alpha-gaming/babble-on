@@ -9,17 +9,9 @@ import {
 import Page from '../components/page';
 import Layout from '../components/layout';
 
-import Upload from '../components/request-forms/upload/image';
+import Upload from '../components/request-forms/upload';
 
 const forms = [
-  {
-    name: 'Upload',
-    component: Upload,
-  },
-  {
-    name: 'Upload',
-    component: Upload,
-  },
   {
     name: 'Upload',
     component: Upload,
@@ -56,9 +48,9 @@ export default class Request extends Page {
         <h1>Request a Babbler</h1>
         <Row>
           <Col xs={12} md={4} lg={3}>
-            <ButtonGroup block vertical style={{ width: '100%' }}>
+            <ButtonGroup vertical style={{ width: '100%' }}>
               {names.map((name, i) => (
-                <Button size="lg" block onClick={this.changeForm(i)} active={i === currentForm}>
+                <Button key={name} size="lg" block onClick={this.changeForm(i)} active={i === currentForm}>
                   {name}
                 </Button>
               ))}
