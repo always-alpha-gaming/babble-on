@@ -41,22 +41,33 @@ module.exports = (expressApp, functions) => {
               .json({ error: 'Unable to fetch profile' });
           }
 
+          const userClone = Object.assign({}, user);
+
+          if (req.body.avatar) {
+            userClone.avatar = req.body.avatar;
+          }
+
+          if (req.body.skills) {
+            userClone.avatar = req.body.skills;
+          }
+
+          if (req.body.bio) {
+            userClone.bio = user.bio;
+          }
+
           if (req.body.name) {
-            // eslint-disable-next-line no-param-reassign
-            user.name = req.body.name;
+            userClone.name = req.body.name;
           }
 
           if (req.body.email) {
             // Reset email verification field if email address has changed
-            if (req.body.email && req.body.email !== user.email) {
-              // eslint-disable-next-line no-param-reassign
-              user.emailVerified = false;
+            if (req.body.email && req.body.email !== userClone.email) {
+              userClone.emailVerified = false;
             }
 
-            // eslint-disable-next-line no-param-reassign
-            user.email = req.body.email;
+            userClone.email = req.body.email;
           }
-          return functions.update(user);
+          return functions.update(userClone);
         })
         .then(() => res.status(204)
           .redirect('/account'))
