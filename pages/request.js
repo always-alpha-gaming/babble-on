@@ -65,7 +65,7 @@ export default class Request extends Page {
     const CurrentForm = forms[currentForm];
 
     return (
-      <Layout session={this.props.session}>
+      <Layout navmenu={false} session={this.props.session}>
         {successMessage && (
           <UncontrolledAlert color="success">
             {successMessage}

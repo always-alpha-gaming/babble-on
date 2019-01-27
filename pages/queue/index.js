@@ -60,7 +60,7 @@ export default class Request extends Page {
     const CurrentForm = forms[currentForm];
 
     return (
-      <Layout session={this.props.session}>
+      <Layout navmenu={false} session={this.props.session}>
         <h1>Work on Request</h1>
         <Row>
           <Col xs={12} md={4} lg={3}>
