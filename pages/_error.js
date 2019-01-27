@@ -1,58 +1,77 @@
 /**
  * Creating a page named _error.js lets you override HTTP error messages
  */
-import React from 'react'
-import Head from 'next/head'
-import Link from 'next/link'
-import { Container } from 'reactstrap'
-import Styles from '../css/index.scss'
-import { withRouter } from 'next/router'
+import React from 'react';
+import PropTypes from 'prop-types';
+import Head from 'next/head';
+import Link from 'next/link';
+import { withRouter } from 'next/router';
+import { Container } from 'reactstrap';
+import Styles from '../css/index.scss';
 
 class ErrorPage extends React.Component {
-
   static propTypes() {
     return {
-      errorCode: React.PropTypes.number.isRequired,
-      url: React.PropTypes.string.isRequired
-    }
+      errorCode: PropTypes.number.isRequired,
+      url: PropTypes.string.isRequired,
+    };
   }
 
-  static getInitialProps({res, xhr}) {
-    const errorCode = res ? res.statusCode : (xhr ? xhr.status : null)
-    return {errorCode}
+  static getInitialProps({ res, xhr }) {
+    let errorCode = null;
+    if (res) {
+      errorCode = res.statusCode;
+    } else if (xhr) {
+      errorCode = xhr.status;
+    }
+    return { errorCode };
   }
 
   render() {
-    var response
-    switch (this.props.errorCode) {
+    const { errorCode, router } = this.props;
+
+    let response;
+    switch (errorCode) {
       case 200: // Also display a 404 if someone requests /_error explicitly
       case 404:
         response = (
           <div>
             <Head>
-              <style dangerouslySetInnerHTML={{__html: Styles}}/>
+              <style dangerouslySetInnerHTML={{ __html: Styles }} />
             </Head>
             <Container className="pt-5 text-center">
               <h1 className="display-4">Page Not Found</h1>
-              <p>The page <strong>{ this.props.router.pathname }</strong> does not exist.</p>
-              <p><Link href="/"><a>Home</a></Link></p>
+              <p>
+                The page
+                {' '}
+                <strong>
+                  {router.pathname}
+                </strong>
+                {' '}
+                does not exist.
+              </p>
+              <p>
+                <Link href="/">
+                  <a href="/">Home</a>
+                </Link>
+              </p>
             </Container>
           </div>
-        )
-        break
+        );
+        break;
       case 500:
         response = (
           <div>
             <Head>
-              <style dangerouslySetInnerHTML={{__html: Styles}}/>
+              <style dangerouslySetInnerHTML={{ __html: Styles }} />
             </Head>
             <Container className="pt-5 text-center">
               <h1 className="display-4">Internal Server Error</h1>
               <p>An internal server error occurred.</p>
             </Container>
           </div>
-        )
-        break
+        );
+        break;
       default:
         response = (
           <div>
@@ -60,19 +79,33 @@ class ErrorPage extends React.Component {
               <style dangerouslySetInnerHTML={{__html: Styles}}/>
             </Head>
             <Container className="pt-5 text-center">
-              <h1 className="display-4">HTTP { this.props.errorCode } Error</h1>
+              <h1 className="display-4">
+                HTTP
+                {errorCode}
+                Error
+              </h1>
               <p>
-                An <strong>HTTP { this.props.errorCode }</strong> error occurred while
-                trying to access <strong>{ this.props.router.pathname }</strong>
+                An
+                {' '}
+                <strong>
+                  HTTP
+                  {' '}
+                  {errorCode}
+                </strong>
+                {' '}
+                error occurred while trying to access
+                {' '}
+                <strong>
+                  {router.pathname}
+                </strong>
               </p>
             </Container>
           </div>
-        )
+        );
     }
 
-    return response
+    return response;
   }
-
 }
 
-export default withRouter(ErrorPage)
+export default withRouter(ErrorPage);

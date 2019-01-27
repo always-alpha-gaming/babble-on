@@ -1,16 +1,16 @@
-import React from 'react'
-import Layout from '../components/layout'
-import { NextAuth } from 'next-auth/client'
+import React from 'react';
+import { NextAuth } from 'next-auth/client';
+
+import Layout from './layout';
 
 export default class extends React.Component {
-  
-  static async getInitialProps({req}) {
+  static async getInitialProps({ req }) {
     return {
-      session: await NextAuth.init({req}),// Add this.props.session to all pages
-      lang: 'en' // Add a lang property to all pages for accessibility
-    }
+      session: await NextAuth.init({ req }), // Add this.props.session to all pages
+      lang: 'en', // Add a lang property to all pages for accessibility
+    };
   }
-  
+
   adminAccessOnly() {
     return (
       <Layout {...this.props} navmenu={false}>
@@ -19,7 +19,6 @@ export default class extends React.Component {
           <p className="lead">You must be signed in as an administrator to access this page.</p>
         </div>
       </Layout>
-    )
+    );
   }
-
 }

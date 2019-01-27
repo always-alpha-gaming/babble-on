@@ -6,6 +6,8 @@ const admin = require('./routes/admin');
 const account = require('./routes/account');
 const requests = require('./routes/requests');
 
+const customRoutes = require('./custom-routes');
+
 const routes = {
   admin,
   account,
@@ -35,6 +37,8 @@ const nextApp = next({
   dir: '.',
   dev: (process.env.NODE_ENV === 'development'),
 });
+
+const customRoutesHandler = customRoutes.getRequestHandler(nextApp);
 
 // Add next-auth to next app
 nextApp
@@ -69,6 +73,8 @@ nextApp
     // and server side, name it ':id'
     expressApp.get('/custom-route/:id', (req, res) => nextApp
       .render(req, res, '/examples/routing', req.params));
+
+    expressApp.use(customRoutesHandler);
 
     // Default catch-all handler to allow Next.js to handle all other routes
     expressApp.all('*', (req, res) => {
