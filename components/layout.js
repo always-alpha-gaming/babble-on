@@ -30,12 +30,12 @@ export default class extends React.Component {
     return {
       /* eslint-disable react/forbid-prop-types */
       session: PropTypes.object.isRequired,
-      providers: PropTypes.object.isRequired,
-      children: PropTypes.object.isRequired,
+      providers: PropTypes.object,
+      children: PropTypes.array.isRequired,
       /* eslint-enable */
-      fluid: PropTypes.boolean,
-      navmenu: PropTypes.boolean,
-      signinBtn: PropTypes.boolean,
+      // fluid: PropTypes.boolean,
+      // navmenu: PropTypes.boolean,
+      // signinBtn: PropTypes.boolean,
       title: PropTypes.string,
     };
   }
