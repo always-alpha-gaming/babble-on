@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "babble-on",
+      "script": "npm",
+      "args" : "run dev"
+    }
+  ]
+}
