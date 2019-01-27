@@ -67,12 +67,21 @@ class Account extends Page {
   }
 
   getUserRequests() {
-    if (!this.userid && this.state.babler === false) {
-      fetch(`http://localhost/requests?user_id=${this.props.session.user.id}`)
-        .then((response) => {
-          this.setState({ requests: response.json() });
-        });
-    }
+
+      fetch(`/requests?user_id=${this.props.session.user.id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then((res) => {
+        if (!res.ok) {
+          console.log('Failed to create new request');
+        }
+        else {
+          console.log(res.json());
+        }
+      });
+
   }
 
   getProfile() {
@@ -81,7 +90,7 @@ class Account extends Page {
     })
       .then(r => r.json())
       .then((user) => {
-        if (!user.name || !user.email) return;
+        if (!user.email) return;
         this.setState({
           name: user.name,
           email: user.email,
@@ -100,7 +109,6 @@ class Account extends Page {
           this.getUserRequests();
         }
       });
-    console.log(this.state.requests);
   }
 
   round(value, step) {
@@ -203,7 +211,7 @@ class Account extends Page {
   }
 
   owner() {
-    if (this.userid) {
+    if (!this.userid) {
       return (
         <>
           <Row className="mt-4">
