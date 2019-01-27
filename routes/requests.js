@@ -131,6 +131,7 @@ module.exports = (expressApp) => {
     requestsCollection.insertOne({
       user_id: req.user.id,
       date: Date.now(),
+      name: req.body.name,
       data: req.body.data,
       type: req.body.type,
     })
