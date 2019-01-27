@@ -4,10 +4,12 @@ const nextAuthConfig = require('./next-auth.config');
 
 const admin = require('./routes/admin');
 const account = require('./routes/account');
+const requests = require('./routes/requests');
 
 const routes = {
   admin,
   account,
+  requests,
 };
 
 // Load environment variables from .env file if present
@@ -54,6 +56,9 @@ nextApp
 
     // Add account management route - reuses functions defined for NextAuth
     routes.account(expressApp, nextAuthOptions.functions);
+
+    // Add request routes
+    routes.requests(expressApp);
 
     // Serve fonts from ionicon npm module
     expressApp.use('/fonts/ionicons', express.static('./node_modules/ionicons/dist/fonts'));
