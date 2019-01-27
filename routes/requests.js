@@ -118,6 +118,7 @@ module.exports = (expressApp) => {
     requestsCollection.insertOne({
       user_id: req.user.id,
       date: Date.now(),
+      data: req.body.data,
       type: req.body.type,
     })
       .then(request => res.status(200)
@@ -126,23 +127,147 @@ module.exports = (expressApp) => {
         .json({ error: 'Unable to create request' }));
   });
 
-  // Expose a route to allow users to delete their profile.
-  expressApp.post('/account/delete', (req, res) => {
-    if (req.user) {
-      functions.remove(req.user.id)
-        .then(() => {
-          // Destroy local session after deleting account
-          req.logout();
-          // When the account has been deleted, redirect client to
-          // /auth/callback to ensure the client has it's local session state
-          // updated to reflect that the user is no longer logged in.
-          req.session.destroy(() => res.redirect('/auth/callback?action=signout'));
-        })
-        .catch(() => res.status(500)
-          .json({ error: 'Unable to delete profile' }));
-    } else {
-      res.status(403)
-        .json({ error: 'Must be signed in to delete profile' });
+
+  // Expose a route to allow users to update their profiles (name, email)
+  expressApp.post('/request/', (req, res) => {
+    if (!req.body) {
+      res.status(400)
+        .json({ error: 'Must include a body' });
+      return;
     }
+    if (!req.user) {
+      res.status(403)
+        .json({ error: 'Must be signed in to make request' });
+      return;
+    }
+    if (!['livechat', 'schedule', 'upload'].includes(req.body.type)) {
+      res.status(400)
+        .json({ error: 'req.body.type must be one of livechat, schedule, or upload' });
+      return;
+    }
+    requestsCollection.insertOne({
+      user_id: req.user.id,
+      date: Date.now(),
+      type: req.body.type,
+    })
+      .then(request => res.status(200)
+        .json(request))
+      .catch(() => res.status(500)
+        .json({ error: 'Unable to create request' }));
+  });
+
+  // Expose a route to return a request by id
+  expressApp.put('/request/:id/start', (req, res) => {
+    // Check user is logged in.
+    if (!req.user) {
+      res.status('403')
+        .end();
+      return;
+    }
+    if (!req.user.babbler) {
+      res.status('403')
+        .json({ error: 'Must be a babbler to accept a request' });
+      return;
+    }
+    requestsCollection
+      .findOneAndUpdate(
+        {
+          _id: ObjectID(req.params.id),
+          babbler_id: { $not: { $exists: true } },
+        },
+        {
+          $set:
+            {
+              babbler_id: req.user.id,
+            },
+        },
+      )
+      .then((result) => {
+        if (result.lastErrorObject.n === 0) {
+          res.status('400')
+            .json({ error: 'Either request with that id does not exist or it is already claimed' });
+        } else {
+          res.json(result);
+        }
+      })
+      .catch(err => res.status(500)
+        .json(err));
+  });
+
+  // Expose a route to return a request by id
+  expressApp.put('/request/:id/complete', (req, res) => {
+    // Check user is logged in.
+    if (!req.user) {
+      res.status('403')
+        .end();
+      return;
+    }
+    if (!req.user.babbler) {
+      res.status('403')
+        .json({ error: 'Must be a babbler to accept a request' });
+      return;
+    }
+    requestsCollection
+      .findOneAndUpdate(
+        {
+          _id: ObjectID(req.params.id),
+          babbler_id: req.user.id,
+        },
+        {
+          $set:
+            {
+              date_completed: Date.now(),
+              response: req.body.response,
+              babbler_id: req.user.id,
+            },
+        },
+      )
+      .then((result) => {
+        if (result.lastErrorObject.n === 0) {
+          res.status('400')
+            .json({ error: 'Request with that id does not exist' });
+        } else {
+          res.json(result);
+        }
+      })
+      .catch(err => res.status(500)
+        .json(err));
+  });
+
+  // Expose a route to return a request by id
+  expressApp.put('/request/:id/review', (req, res) => {
+    // Check user is logged in.
+    if (!req.user) {
+      res.status('403')
+        .end();
+      return;
+    }
+    requestsCollection
+      .findOneAndUpdate(
+        {
+          _id: ObjectID(req.params.id),
+          user_id: req.user.id,
+          reviewed: { $not: { $exists: true } },
+        },
+        {
+          $set:
+            {
+              reviewed: true,
+            },
+        },
+      )
+      .then((result) => {
+        if (result.lastErrorObject.n === 0) {
+          res.status('400')
+            .json({
+              error: 'Request with that id does not exist or it'
+                + 's not by that user or review has already been left',
+            });
+        } else {
+          res.json(result);
+        }
+      })
+      .catch(err => res.status(500)
+        .json(err));
   });
 };

@@ -204,6 +204,10 @@ module.exports = () => new Promise((resolve, reject) => {
         return resolve({
           // eslint-disable-next-line no-underscore-dangle
           id: user._id,
+          babbler: user.babbler,
+          rating: user.rating,
+          avatar: user.avatar,
+          bio: user.bio,
           name: user.name,
           email: user.email,
           emailVerified: user.emailVerified,
