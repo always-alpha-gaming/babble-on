@@ -1,5 +1,4 @@
 import React from 'react'
-import Router from 'next/router'
 import Link from 'next/link'
 import fetch from 'isomorphic-fetch'
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap'
@@ -11,13 +10,13 @@ import Cookies from 'universal-cookie'
 export default class extends Page {
 
   static async getInitialProps({req}) {
-    let props = await super.getInitialProps({req})
-    props.linkedAccounts = await NextAuth.linked({req})
+    let props = await super.getInitialProps({req});
+    props.linkedAccounts = await NextAuth.linked({req});
     return props
   }
 
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       session: props.session,
       isSignedIn: (props.session.user) ? true : false,
@@ -26,37 +25,37 @@ export default class extends Page {
       emailVerified: false,
       alertText: null,
       alertStyle: null
-    }
+    };
     if (props.session.user) {
-      this.state.name = props.session.user.name
+      this.state.name = props.session.user.name;
       this.state.email = props.session.user.email
     }
-    this.handleChange = this.handleChange.bind(this)
+    this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this)
   }
 
   async componentDidMount() {
-    const session = await NextAuth.init({force: true})
+    const session = await NextAuth.init({force: true});
     this.setState({
       session: session,
       isSignedIn: (session.user) ? true : false
-    })
+    });
 
     // If the user bounces off to link/unlink their account we want them to
     // land back here after signing in with the other service / unlinking.
-    const cookies = new Cookies()
-    cookies.set('redirect_url', window.location.pathname, { path: '/' })
-    
+    const cookies = new Cookies();
+    cookies.set('redirect_url', window.location.pathname, { path: '/' });
+
     this.getProfile()
   }
-  
+
   getProfile() {
     fetch('/account/user', {
       credentials: 'include'
     })
     .then(r => r.json())
     .then(user => {
-      if (!user.name || !user.email) return
+      if (!user.name || !user.email) return;
       this.setState({
         name: user.name,
         email: user.email,
@@ -64,7 +63,7 @@ export default class extends Page {
       })
     })
   }
-  
+
   handleChange(event) {
     this.setState({
       [event.target.name]: event.target.value
@@ -73,26 +72,26 @@ export default class extends Page {
 
   async onSubmit(e) {
     // Submits the URL encoded form without causing a page reload
-    e.preventDefault()
-    
+    e.preventDefault();
+
     this.setState({
       alertText: null,
       alertStyle: null
-    })
-    
+    });
+
     const formData = {
       _csrf: await NextAuth.csrfToken(),
       name: this.state.name || '',
       email: this.state.email || ''
-    }
-    
+    };
+
     // URL encode form
     // Note: This uses a x-www-form-urlencoded rather than sending JSON so that
     // the form also in browsers without JavaScript
     const encodedForm = Object.keys(formData).map((key) => {
       return encodeURIComponent(key) + '=' + encodeURIComponent(formData[key])
-    }).join('&')
-    
+    }).join('&');
+
     fetch('/account/user', {
       credentials: 'include',
       method: 'POST',
@@ -103,11 +102,11 @@ export default class extends Page {
     })
     .then(async res => {
       if (res.status === 200) {
-        this.getProfile()
+        this.getProfile();
         this.setState({
           alertText: 'Changes to your profile have been saved',
           alertStyle: 'alert-success',
-        })
+        });
         // Force update session so that changes to name or email are reflected
         // immediately in the navbar (as we pass our session to it).
         this.setState({
@@ -122,36 +121,54 @@ export default class extends Page {
       }
     })
   }
-  
+
   render() {
     if (this.state.isSignedIn === true) {
-      const alert = (this.state.alertText === null) ? <div/> : <div className={`alert ${this.state.alertStyle}`} role="alert">{this.state.alertText}</div>
-      
+      const alert = (this.state.alertText === null) ? <div/> : <div className={`alert ${this.state.alertStyle}`} role="alert">{this.state.alertText}</div>;
+
       return (
         <Layout {...this.props} navmenu={false}>
           <Row className="mb-1">
             <Col xs="12">
-              <h1 className="display-2">Your Account</h1>
+              <h1 className="display-2">Account</h1>
               <p className="lead text-muted">
                 Edit your profile and link accounts
               </p>
             </Col>
           </Row>
           {alert}
+          <span className="icon ion-md-star "/>
+          <span className="icon ion-md-star-outline"/>
+          <span className="icon ion-md-star-half"/>
           <Row className="mt-4">
             <Col xs="12" md="8" lg="9">
               <Form method="post" action="/account/user" onSubmit={this.onSubmit}>
                 <Input name="_csrf" type="hidden" value={this.state.session.csrfToken} onChange={()=>{}}/>
                 <FormGroup row>
-                  <Label sm={2}>Name:</Label>
-                  <Col sm={10} md={8}>
-                    <Input name="name" value={this.state.name} onChange={this.handleChange}/>
+                  <Col>
+                      <img className={"img img-fluid"} src="/static/img/avatar.svg" alt="didnt work" />
                   </Col>
+                  <Col>
+                        <Label sm={2}>Name:</Label>
+
+                          <Input name="name" value={this.state.name} onChange={this.handleChange}/>
+                          <Input type="textarea" name="bio" placeholder="bio..." value="" onChange={this.handleChange}/>
+
+                  </Col>
+                </FormGroup>
+                <FormGroup row>
+                <Input colour="primary" type="file"/>
                 </FormGroup>
                 <FormGroup row>
                   <Label sm={2}>Email:</Label>
                   <Col sm={10} md={8}>
                     <Input name="email" value={(this.state.email.match(/.*@localhost\.localdomain$/)) ? '' : this.state.email} onChange={this.handleChange}/>
+                  </Col>
+                </FormGroup>
+                <FormGroup row>
+                  <Label sm={2}>Skills:</Label>
+                  <Col sm={10} md={8}>
+                    <Input type="textarea" name="skills" value="" block onChange={this.handleChange}/>
                   </Col>
                 </FormGroup>
                 <FormGroup row>
@@ -162,6 +179,12 @@ export default class extends Page {
                   </Col>
                 </FormGroup>
               </Form>
+            </Col>
+            <Col>
+                <Button color="primary" size ="lg" block>Enter queue</Button>
+                <Button color="primary" size ="lg" block>Enter queue</Button>
+                <Button color="primary" size ="lg" block>Enter queue</Button>
+                <Button color="primary" size ="lg" block>Enter queue</Button>
             </Col>
             <Col xs="12" md="4" lg="3">
             <LinkAccounts
@@ -179,7 +202,7 @@ export default class extends Page {
               </p>
               <Form id="signout" method="post" action="/account/delete">
                 <input name="_csrf" type="hidden" value={this.state.session.csrfToken}/>
-                <Button type="submit" color="outline-danger"><span className="icon ion-md-trash mr-1"></span> Delete Account</Button>
+                <Button type="submit" color="outline-danger"><span className="icon ion-md-trash mr-1"/> Delete Account</Button>
               </Form>
             </Col>
           </Row>
