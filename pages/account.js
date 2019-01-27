@@ -229,7 +229,7 @@ class Account extends Page {
                     <img
                       className="img img-fluid"
                       src={this.state.avatar ? this.state.avatar : '/static/img/avatar.svg'}
-                      alt="didnt work"
+                      alt="didnt work 1"
                     />
                   </Col>
                   <Col>
