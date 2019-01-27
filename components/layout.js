@@ -68,10 +68,11 @@ export default class extends React.Component {
 
   async toggleModal(e) {
     if (e) {
-    this.toggleNavbar = this.toggleNavbar.bind(this);
-    this.state = {
-      collapsed: true
-    };
+      this.toggleNavbar = this.toggleNavbar.bind(this);
+      this.state = {
+        collapsed: true
+      };
+    }
   }
 
   toggleNavbar() {
