@@ -60,6 +60,19 @@ module.exports = (expressApp) => {
 
     const skip = (size * (page - 1) > 0) ? size * (page - 1) : 0;
 
+    const babblerId = req.query.babbler_id ? req.query.babbler_id : false;
+    const userId = req.query.user_id ? req.query.user_id : false;
+
+    const query = {};
+
+    if (babblerId) {
+      query.babbler_id = ObjectID(babblerId);
+    }
+
+    if (userId) {
+      query.user_id = ObjectID(userId);
+    }
+
     const response = {
       requests: [],
       page,
@@ -73,7 +86,7 @@ module.exports = (expressApp) => {
     let result;
     return new Promise((resolve, reject) => {
       result = requestsCollection
-        .find()
+        .find(query)
         .skip(skip)
         .sort(sort)
         .limit(size);
