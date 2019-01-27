@@ -26,16 +26,6 @@ const forms = [
     },
   },
   {
-    name: 'Completed',
-    component: RequestList,
-    props: {
-      userId: '@me',
-      claimed: true,
-      complete: true,
-      renderContent: true,
-    },
-  },
-  {
     name: 'Live Chat',
     component: LiveChat,
     props: {},
@@ -44,6 +34,16 @@ const forms = [
     name: 'Schedule',
     component: Schedule,
     props: {},
+  },
+  {
+    name: 'Completed',
+    component: RequestList,
+    props: {
+      userId: '@me',
+      claimed: true,
+      complete: true,
+      renderContent: true,
+    },
   },
 ];
 const names = forms.map(({ name }) => name);
