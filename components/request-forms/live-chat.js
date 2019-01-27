@@ -24,7 +24,7 @@ function onClick(onSuccess) {
 export default ({ onSuccess }) => (
   <>
     <h2>Live Chat</h2>
-    <Button onClick={onClick(onSuccess)} block>
+    <Button onClick={onClick(onSuccess)} color="primary" block>
       Join live chat
     </Button>
   </>
