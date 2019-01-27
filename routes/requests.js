@@ -2,7 +2,7 @@
  * Example account management routes
  */
 
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectID } = require('mongodb');
 
 let requestsCollection;
 if (process.env.MONGO_URI) {
@@ -22,6 +22,21 @@ module.exports = (expressApp) => {
   if (expressApp === null) {
     throw new Error('expressApp option must be an express server instance');
   }
+
+  // Expose a route to return a request by id
+  expressApp.get('/request/:id', (req, res) => {
+    // Check user is logged in.
+    if (!req.user) {
+      res.status('403')
+        .end();
+      return;
+    }
+    requestsCollection
+      .findOne(ObjectID(req.params.id))
+      .then(result => res.json(result))
+      .catch(err => res.status(500)
+        .json(err));
+  });
 
   // Expose a route to return user profile if logged in with a session
   expressApp.get('/requests/', (req, res) => {
