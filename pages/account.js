@@ -35,6 +35,8 @@ class Account extends Page {
       this.state.name = props.session.user.name;
       this.state.email = props.session.user.email;
     }
+
+
     this.handleChange = this.handleChange.bind(this);
     this.photoUpload = this.photoUpload.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -55,6 +57,23 @@ class Account extends Page {
     this.getProfile();
   }
 
+  getBabblerRequests() {
+    if (!this.userid && this.state.babler === true) {
+      fetch(`http://localhost/requests?babbler_id=${this.props.session.user.id}`)
+        .then((response) => {
+          this.setState({ requests: response.json() });
+        });
+    }
+  }
+
+  getUserRequests() {
+    if (!this.userid && this.state.babler === false) {
+      fetch(`http://localhost/requests?user_id=${this.props.session.user.id}`)
+        .then((response) => {
+          this.setState({ requests: response.json() });
+        });
+    }
+  }
 
   getProfile() {
     fetch('/account/user', {
@@ -71,9 +90,17 @@ class Account extends Page {
           skills: user.skills,
           type: user.type,
           bio: user.bio,
+          babler: user.babler,
           rating: '2.3',
         });
+        if (user.babler === true) {
+          this.getBabblerRequests();
+        }
+        else {
+          this.getUserRequests();
+        }
       });
+    console.log(this.state.requests);
   }
 
   round(value, step) {
@@ -88,19 +115,18 @@ class Account extends Page {
       const starArray = [];
       let i;
       for (i = 1; i < stars; i++) {
-        starArray.push(<i key={i} className="icon ion-md-star" style={{ fontSize: '50px' }}/>);
+        starArray.push(<i key={i} className="icon ion-md-star" style={{ fontSize: '50px' }} />);
       }
       if (stars % 1 !== 0) {
-        starArray.push(<i key={i} className="icon ion-md-star-half" style={{ fontSize: '50px' }}/>);
+        starArray.push(<i key={i} className="icon ion-md-star-half" style={{ fontSize: '50px' }} />);
       }
       const arrayln = starArray.length;
       for (let j = arrayln; j < 5; j++) {
-        starArray.push(<i key={i + j} className="icon ion-md-star-outline"
-                          style={{ fontSize: '50px' }}/>);
+        starArray.push(<i key={i + j} className="icon ion-md-star-outline" style={{ fontSize: '50px' }} />);
       }
       return starArray;
     }
-
+    return null;
   }
 
   handleChange(event) {
@@ -152,9 +178,9 @@ class Account extends Page {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: encodedForm
+      body: encodedForm,
     })
-      .then(async res => {
+      .then(async (res) => {
         if (res.status === 200) {
           this.getProfile();
           this.setState({
@@ -200,7 +226,7 @@ class Account extends Page {
                   </Col>
                   <Col>
                     <Label sm={2}>Name:</Label>
-                    <Input name="name" value={this.state.name} onChange={this.handleChange}/>
+                    <Input name="name" value={this.state.name} onChange={this.handleChange} />
                     <Label sm={2}>Bio:</Label>
                     <Input
                       type="textarea"
@@ -220,7 +246,7 @@ class Account extends Page {
                         type="file"
                         hidden
                         onChange={this.photoUpload}
-                        ref={(ref) => this.fileUpload = ref}
+                        ref={(ref) => { this.fileUpload = ref; }}
                       />
                     </label>
                   </Col>
@@ -271,15 +297,23 @@ class Account extends Page {
           </Row>
           <Row>
             <Col>
+              <h2>Requests</h2>
+              <p>
+                Once all request requirments are meant complete the request to earn your money.
+              </p>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
               <h2>Delete your account</h2>
               <p>
                 If you delete your account it will be erased immediately.
                 You can sign up again at any time.
               </p>
               <Form id="signout" method="post" action="/account/delete">
-                <input name="_csrf" type="hidden" value={this.state.session.csrfToken}/>
+                <input name="_csrf" type="hidden" value={this.state.session.csrfToken} />
                 <Button type="submit" color="outline-danger">
-                  <span className="icon ion-md-trash mr-1"/>
+                  <span className="icon ion-md-trash mr-1" />
                   Delete Account
                 </Button>
               </Form>
