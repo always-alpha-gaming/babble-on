@@ -42,6 +42,7 @@ export default class Upload extends React.Component {
       url,
     }));
 
+    // eslint-disable-next-line no-undef
     fetch('/request', {
       method: 'POST',
       headers: {
