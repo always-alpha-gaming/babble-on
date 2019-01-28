@@ -49,6 +49,7 @@ export default class RequestList extends React.Component {
 
   componentDidMount() {
     this.loadRequests();
+    this.timer = setInterval(this.loadRequests, 2000);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -67,6 +68,10 @@ export default class RequestList extends React.Component {
     if (prevProps.renderContent !== this.props.renderContent) {
       this.loadRequests();
     }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   loadRequests() {
